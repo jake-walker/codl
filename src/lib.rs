@@ -5,7 +5,7 @@
 
 use std::error::Error;
 
-use models::{ProcessOptions, ServerInfo};
+use models::{ProcessOptions, ProcessResponse, ServerInfo};
 use reqwest::{
     header::{self, HeaderMap},
     Client as HttpClient,
@@ -98,7 +98,7 @@ impl Client {
         &self,
         url: &str,
         options: ProcessOptions,
-    ) -> Result<String, Box<dyn Error>> {
+    ) -> Result<ProcessResponse, Box<dyn Error>> {
         let mut body = serde_json::to_value(options)?;
 
         if let Value::Object(map) = &mut body {
@@ -115,7 +115,21 @@ impl Client {
             .await?
             .error_for_status()?;
 
-        Ok(res.text().await?)
+        let res_json: Value = res.json().await?;
+
+        println!("{}", res_json.to_string());
+
+        match res_json
+            .as_object()
+            .and_then(|x| x.get("status"))
+            .and_then(|x| x.as_str())
+        {
+            Some("tunnel") | Some("redirect") => Ok(ProcessResponse::TunnelRedirect(
+                serde_json::from_value(res_json)?,
+            )),
+            Some("picker") => Ok(ProcessResponse::Picker(serde_json::from_value(res_json)?)),
+            _ => Err("bad response recieved".into()),
+        }
     }
 }
 
@@ -141,7 +155,14 @@ mod tests {
     #[tokio::test]
     async fn test_integration_process() -> Result<(), Box<dyn Error>> {
         let client = create_test_client()?;
-        client.process(MEDIA_URL, ProcessOptions::default()).await?;
+        let res = client.process(MEDIA_URL, ProcessOptions::default()).await?;
+
+        if let ProcessResponse::TunnelRedirect(res1) = res {
+            assert_eq!(res1.filename, "twitter_1825427547108053062.mp4");
+        } else {
+            panic!("api response was not tunnel/redirect");
+        }
+
         Ok(())
     }
 }

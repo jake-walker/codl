@@ -78,3 +78,34 @@ impl Default for ProcessOptions {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TunnelRedirectResponse {
+    pub status: String,
+    pub url: String,
+    pub filename: String,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PickerResponse {
+    pub status: String,
+    pub audio: String,
+    pub audio_filename: String,
+    pub picker: Vec<PickerItem>,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PickerItem {
+    #[serde(rename = "type")]
+    pub media_type: String,
+    pub url: String,
+    pub tumb: String,
+}
+
+pub enum ProcessResponse {
+    TunnelRedirect(TunnelRedirectResponse),
+    Picker(PickerResponse),
+}
