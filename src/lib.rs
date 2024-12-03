@@ -32,15 +32,14 @@ impl Client {
     ///
     /// let my_client = Client::new(
     ///     "http://127.0.0.1:9000".to_string(),
-    ///     "00000000-0000-0000-0000-000000000000".to_string()).unwrap();
+    ///     Some("00000000-0000-0000-0000-000000000000".to_string())).unwrap();
     /// ```
-    pub fn new(instance_url: String, auth_token: String) -> Result<Self, Box<dyn Error>> {
+    pub fn new(instance_url: String, auth_token: Option<String>) -> Result<Self, Box<dyn Error>> {
         let mut default_headers = HeaderMap::new();
 
-        default_headers.insert(
-            header::AUTHORIZATION,
-            format!("Api-Key {}", auth_token).parse()?,
-        );
+        if let Some(token) = auth_token {
+            default_headers.insert(header::AUTHORIZATION, format!("Api-Key {}", token).parse()?);
+        }
         default_headers.insert(header::ACCEPT, "application/json".parse()?);
 
         Ok(Client {
@@ -62,7 +61,7 @@ impl Client {
     /// async fn main() {
     ///     let my_client = Client::new(
     ///         "http://127.0.0.1:9000".to_string(),
-    ///         "00000000-0000-0000-0000-000000000000".to_string()).unwrap();
+    ///         Some("00000000-0000-0000-0000-000000000000".to_string())).unwrap();
     ///     let info = my_client.info().await;
     /// }
     /// ```
@@ -89,7 +88,7 @@ impl Client {
     /// async fn main() {
     ///     let my_client = Client::new(
     ///         "http://127.0.0.1:9000".to_string(),
-    ///         "00000000-0000-0000-0000-000000000000".to_string()).unwrap();
+    ///         Some("00000000-0000-0000-0000-000000000000".to_string())).unwrap();
     ///     let res = my_client.process(
     ///         "https://twitter.com/i/status/1825427547108053062",
     ///         ProcessOptions::default()).await;
@@ -125,12 +124,11 @@ mod tests {
     use super::*;
 
     const INSTANCE_URL: &str = "http://127.0.0.1:9000";
-    const AUTH_TOKEN: &str = "00000000-0000-0000-0000-000000000000";
 
     const MEDIA_URL: &str = "https://twitter.com/i/status/1825427547108053062";
 
     fn create_test_client() -> Result<Client, Box<dyn Error>> {
-        Client::new(INSTANCE_URL.to_string(), AUTH_TOKEN.to_string())
+        Client::new(INSTANCE_URL.to_string(), None)
     }
 
     #[tokio::test]
