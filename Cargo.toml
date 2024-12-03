@@ -1,0 +1,30 @@
+[package]
+name = "codl"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "A CLI and Rust library for interacting with cobalt, a media downloader"
+homepage = "https://github.com/jake-walker/codl"
+repository = "https://github.com/jake-walker/codl"
+readme = "README.md"
+keywords = ["cobalt", "media", "download"]
+categories = [
+    "command-line-utilities",
+    "multimedia",
+    "multimedia::audio",
+    "multimedia::video",
+]
+
+
+[dependencies]
+reqwest = { version = "0.12.9", features = ["json"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+serde_with = "3.11.0"
+
+[dev-dependencies]
+tokio = { version = "1.35.1", features = [
+    "test-util",
+    "macros",
+    "rt-multi-thread",
+] }
