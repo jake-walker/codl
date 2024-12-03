@@ -9,6 +9,14 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      cobalt-api:
+        image: ghcr.io/imputnet/cobalt:10
+        ports:
+          - 9000:9000
+        env:
+          API_URL: "http://127.0.0.1:9000/"
+          API_AUTH_REQUIRED: "0"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
