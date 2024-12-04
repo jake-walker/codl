@@ -1,4 +1,5 @@
 use std::time::SystemTime;
+use bytes::Bytes;
 
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, TimestampMilliSeconds};
@@ -32,31 +33,31 @@ pub struct ServerInfo {
 #[serde(rename_all = "camelCase")]
 pub struct ProcessOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
-    video_quality: Option<String>,
+    pub video_quality: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    audio_format: Option<String>,
+    pub audio_format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    audio_bitrate: Option<String>,
+    pub audio_bitrate: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    filename_style: Option<String>,
+    pub filename_style: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    download_mode: Option<String>,
+    pub download_mode: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    youtube_video_codec: Option<String>,
+    pub youtube_video_codec: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    youtube_dub_lang: Option<String>,
+    pub youtube_dub_lang: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    always_proxy: Option<bool>,
+    pub always_proxy: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    disable_metadata: Option<bool>,
+    pub disable_metadata: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    tiktok_full_audio: Option<bool>,
+    pub tiktok_full_audio: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    tiktok_h265: Option<bool>,
+    pub tiktok_h265: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    twitter_gif: Option<bool>,
+    pub twitter_gif: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    youtube_hls: Option<bool>,
+    pub youtube_hls: Option<bool>,
 }
 
 impl Default for ProcessOptions {
@@ -81,7 +82,7 @@ impl Default for ProcessOptions {
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct TunnelRedirectResponse {
+pub struct TunnelRedirectResult {
     pub status: String,
     pub url: String,
     pub filename: String,
@@ -89,7 +90,7 @@ pub struct TunnelRedirectResponse {
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PickerResponse {
+pub struct PickerResult {
     pub status: String,
     pub audio: String,
     pub audio_filename: String,
@@ -102,10 +103,15 @@ pub struct PickerItem {
     #[serde(rename = "type")]
     pub media_type: String,
     pub url: String,
-    pub tumb: String,
+    pub thumb: String,
 }
 
-pub enum ProcessResponse {
-    TunnelRedirect(TunnelRedirectResponse),
-    Picker(PickerResponse),
+pub enum ProcessResult {
+    TunnelRedirect(TunnelRedirectResult),
+    Picker(PickerResult),
+}
+
+pub struct DownloadResult {
+    pub data: Bytes,
+    pub filename: String,
 }
