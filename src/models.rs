@@ -1,5 +1,5 @@
-use std::time::SystemTime;
 use bytes::Bytes;
+use std::time::SystemTime;
 
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, TimestampMilliSeconds};
@@ -80,7 +80,7 @@ impl Default for ProcessOptions {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct TunnelRedirectResult {
     pub status: String,
@@ -88,7 +88,7 @@ pub struct TunnelRedirectResult {
     pub filename: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PickerResult {
     pub status: String,
@@ -97,7 +97,7 @@ pub struct PickerResult {
     pub picker: Vec<PickerItem>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PickerItem {
     #[serde(rename = "type")]
